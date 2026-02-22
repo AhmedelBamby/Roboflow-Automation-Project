@@ -1,0 +1,5 @@
+playwright>=1.40.0
+pyyaml>=6.0
+filelock>=3.0
+flask>=3.0
+requests>=2.28

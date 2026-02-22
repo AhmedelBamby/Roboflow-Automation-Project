@@ -1,0 +1,129 @@
+# ============================================================
+# Roboflow Annotation Batch Automation — Configuration
+# ============================================================
+
+# --- Authentication ---
+email: "A.Elbamby61869@student.aast.edu"
+
+# --- Project ---
+workspace_url: "https://app.roboflow.com/graduation-project-computer-vision-aastmt"
+project_name: "major-aast-dataset"
+
+# --- Phase ---
+# Which phase to run: 1 (assign batches), 2 (move to dataset), or "both"
+phase: 2
+
+# --- Batch Settings (Phase 1) ---
+# How many images to accumulate (across pages) before clicking Assign
+images_per_batch: 5000
+
+# Number of iterations (loops) to run before stopping
+total_iterations: 20000
+
+# Maximum pages to paginate through when selecting images (safety ceiling).
+# If images_selected plateaus for 3 consecutive pages, the loop exits early.
+max_pagination_pages: 50
+
+# --- Phase 2 Settings ---
+# Number of parallel browser tabs for processing annotation jobs
+parallel_tabs: 10
+
+# Minimum total images (annotated + unannotated) required to process a job
+# Jobs with fewer images will be skipped.
+min_images_per_job: 5
+
+# --- Collection Strategy (Phase 2) ---
+# Controls HOW job URLs are gathered from the Annotating column.
+#   "top_down"  — original logic: start from data-index 0, scroll downward
+#   "bottom_up" — new logic: scroll to bottom of list, collect from last card upward
+# Default: "top_down"
+collection_strategy: "top_down"
+
+# --- Coordination (Multi-Process Phase 2) ---
+# Enable cross-process coordination via shared JSON file.
+# When true, both top_down and bottom_up strategies read/write a shared file
+# to avoid processing the same cards and to redistribute failed cards.
+# Default: false (single-process mode, no coordination file needed)
+enable_coordination: true
+
+# Path to the shared coordination file (relative to project root).
+coordination_file: "coordination.json"
+
+# Seconds before a "held" entry is considered stale (process crashed).
+# After this timeout, any strategy can reclaim the URL.
+# Default: 1800 (30 minutes — covers longest observed null conversion of ~20min)
+coordination_stale_timeout: 1800
+
+# Whether to wipe the coordination file on process start.
+# true  — fresh start, ignore previous session's state
+# false — resume from where the previous session left off
+# NOTE: In HTTP mode this flag is IGNORED — workers never wipe the shared
+#       server.  Use --reset or --reset-blacklist on the server CLI instead.
+coordination_reset_on_start: false
+
+# Coordination backend mode:
+#   "file" — local JSON file + filelock (default, single-machine)
+#   "http" — HTTP coordination server (multi-machine)
+# Default: "file"
+coordination_mode: "http"
+
+# URL of the HTTP coordination server (only used when coordination_mode: "http").
+# Laptop A (server host): "http://localhost:8099"
+# Laptop B (remote worker): "http://<LAPTOP-A-IP>:8099"
+# Default: "http://localhost:8099"
+coordination_server_url: "http://localhost:8099"
+
+# --- Timeout Tuning ---
+# Global multiplier applied to all adaptive timeouts.
+# Set to 2.0 on slow connections; 0.5 on fast local networks.
+timeout_multiplier: 2.0
+
+# --- Exclusions ---
+# Display names of annotators to SKIP when assigning
+exclude_annotators:
+  - "Roboflow Labeling"
+
+# --- Browser ---
+# false = visible browser (for debugging), true = invisible
+headless: false
+
+# --- Remote Monitoring ---
+# These settings control the remote monitoring dashboard features.
+# They only take effect when coordination_mode: "http".
+
+# Enable remote log shipping to the coordination server.
+# Worker log entries are buffered locally and flushed periodically.
+# Default: true
+remote_logging: true
+
+# Seconds between automatic log flushes to the server.
+# Lower values = more real-time but more network traffic.
+# Minimum: 1, Default: 5
+log_flush_interval: 5
+
+# Number of buffered log entries that trigger an early flush
+# (before the timer expires). Minimum: 1, Default: 50
+log_flush_threshold: 50
+
+# Upload diagnostic files (screenshots, HTML dumps) to the server.
+# When true, capture_diagnostics() sends a copy to /diagnostics.
+# Default: true
+remote_diagnostics: true
+
+# Seconds between heartbeat pings to the server.
+# The dashboard uses this to show worker online/stale/offline status.
+# Minimum: 5, Default: 30
+heartbeat_interval: 30
+
+# Enable automatic code updates from the coordination server.
+# On startup, the worker compares local file hashes against the server
+# manifest and pulls updated files.  Requires a manual restart to apply.
+# Default: false  (opt-in — set to true on remote workers)
+auto_update: false
+
+# --- Collection Tier Flags ---
+# Tier 0: intercept Firestore subscription POSTs to extract job IDs (fastest — triggers page reload)
+use_network_tier0: false
+# Tier 1: React Fiber DOM scan — reads virtualised list without clicking (fast, requires scroll)
+use_fiber_tier1: true
+# Tier 2: click-per-card is always last resort and cannot be disabled
