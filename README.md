@@ -293,6 +293,10 @@ Monitor both workers at: `http://localhost:8099/dashboard`
 6. Confirms the assignment and waits for job creation
 7. Returns to Unassigned Images and repeats
 
+**📹 Demo:**
+- [Quick Preview (30s GIF)](https://drive.google.com/file/d/198_pXi_RXY0jn2FVZs8Yq9qYpAGiykQ-/view?usp=sharing)
+- [Full Recording (MP4)](https://drive.google.com/file/d/1t5Q-xes5ApGvwhcLTwi8Jn2XPhkw5A3a/view?usp=sharing)
+
 ### Phase 2 — Move to Dataset
 
 1. **Collects** job URLs from the Annotating board column (via the [3-tier system](#collection-tiers))
@@ -304,6 +308,10 @@ Monitor both workers at: `http://localhost:8099/dashboard`
    - Clicks **Add N Images to Dataset → Confirm**
 4. **Recycles** tab slots — when a tab finishes, the next URL from the queue takes its place
 5. Repeats until all jobs are processed or the board is empty
+
+**📹 Demo:**
+- [Quick Preview (30s GIF)](https://drive.google.com/file/d/1dZJSDUvq-2bPPTYXcnJNKe1FL85Vin27/view?usp=sharing)
+- [Full Recording (MP4)](https://drive.google.com/file/d/1vGvE2J_lQSgdPPkkJ3CNbOcdWA2BPZZA/view?usp=sharing)
 
 ---
 
