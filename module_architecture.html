@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roboflow Automation - Module Architecture</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        header {
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.6s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .section h2 {
+            color: #667eea;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+        
+        .section h3 {
+            color: #764ba2;
+            font-size: 1.3rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            text-align: center;
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Module grid */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .module-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .module-card h4 {
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 0.5rem;
+        }
+        
+        .module-stat {
+            margin: 0.5rem 0;
+            font-size: 0.95rem;
+        }
+        
+        .module-stat strong {
+            opacity: 0.9;
+        }
+        
+        .module-stat .value {
+            color: #e0e0ff;
+            font-weight: 600;
+        }
+        
+        /* Dependency matrix */
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            font-size: 0.95rem;
+        }
+        
+        .matrix-table th {
+            background: #667eea;
+            color: white;
+            padding: 0.8rem;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        .matrix-table td {
+            padding: 0.8rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .matrix-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .matrix-table tr:hover {
+            background: #e8eaf6;
+        }
+        
+        .module-name {
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        .imports-list {
+            color: #666;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .count-badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        
+        /* Connection summary */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .summary-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .summary-card.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .summary-card.success {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            color: #333;
+        }
+        
+        .summary-card h4 {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .summary-card .number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+        }
+        
+        .summary-card .detail {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+        
+        /* Connection flow */
+        .flow-diagram {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            line-height: 1.8;
+        }
+        
+        .flow-arrow {
+            color: #667eea;
+            font-weight: 600;
+            margin: 0 0.5rem;
+        }
+        
+        footer {
+            background: rgba(0, 0, 0, 0.1);
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .info-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            margin: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .tab-button {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+        }
+        
+        .tab-button:hover {
+            color: #667eea;
+        }
+        
+        .tab-button.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🏗️ Roboflow Automation</h1>
+        <p>Module Architecture & Dependency Analysis</p>
+    </header>
+    
+    <div class="container">
+        
+        <!-- Overview -->
+        <div class="section">
+            <h2>📋 Architecture Overview</h2>
+            <div class="summary-cards">
+                <div class="summary-card primary">
+                    <h4>Total Modules</h4>
+                    <div class="number">8</div>
+                    <div class="detail">Python + HTML templates</div>
+                </div>
+                <div class="summary-card success">
+                    <h4>Total Connections</h4>
+                    <div class="number">12</div>
+                    <div class="detail">Direct import relationships</div>
+                </div>
+                <div class="summary-card">
+                    <h4>Lines of Code</h4>
+                    <div class="number">6,253</div>
+                    <div class="detail">Total across all modules</div>
+                </div>
+                <div class="summary-card success">
+                    <h4>Most Complex</h4>
+                    <div class="number">dataset_mover</div>
+                    <div class="detail">2,898 lines, 22 functions</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- High-Level Diagram -->
+        <div class="section">
+            <h2>📊 High-Level Architecture Diagram</h2>
+            <div class="mermaid">
+graph TB
+    subgraph "Entry Point"
+        MAIN["main.py<br/>Entry Point"]
+    end
+    
+    subgraph "Core Services"
+        AUTH["auth.py<br/>Auth & Session"]
+        NAV["navigator.py<br/>Navigation"]
+        BC["batch_creator.py<br/>Batch Creator"]
+    end
+    
+    subgraph "Coordination"
+        COORD["coordinator.py<br/>Coordinator Interface"]
+        COORDSRV["coordination_server.py<br/>Flask Server"]
+    end
+    
+    subgraph "Core Logic"
+        DM["dataset_mover.py<br/>Dataset Movement"]
+    end
+    
+    subgraph "Utilities"
+        UTILS["utils.py<br/>Shared Utilities"]
+        TMPL["templates/<br/>dashboard.html"]
+    end
+    
+    MAIN --> AUTH
+    MAIN --> NAV
+    MAIN --> BC
+    MAIN --> COORD
+    MAIN --> DM
+    MAIN --> UTILS
+    
+    AUTH --> UTILS
+    NAV --> UTILS
+    BC --> NAV
+    BC --> UTILS
+    BC --> DM
+    DM --> UTILS
+    COORD --> UTILS
+    
+    COORD <--> COORDSRV
+    COORDSRV --> TMPL
+    
+    style MAIN fill:#667eea,stroke:#333,stroke-width:2px,color:#fff
+    style UTILS fill:#84fab0,stroke:#333,stroke-width:2px,color:#333
+    style COORD fill:#f5a623,stroke:#333,stroke-width:2px,color:#fff
+    style AUTH fill:#7ed321,stroke:#333,stroke-width:2px,color:#fff
+    style NAV fill:#7ed321,stroke:#333,stroke-width:2px,color:#fff
+    style BC fill:#bd10e0,stroke:#333,stroke-width:2px,color:#fff
+    style DM fill:#bd10e0,stroke:#333,stroke-width:2px,color:#fff
+            </div>
+        </div>
+        
+        <!-- Modules Detailed View -->
+        <div class="section">
+            <h2>📦 Module Details</h2>
+            
+            <div class="modules-grid">
+                <div class="module-card">
+                    <h4>auth.py</h4>
+                    <div class="module-stat">📝 Lines: <span class="value">182</span></div>
+                    <div class="module-stat">⚙️ Functions: <span class="value">4</span></div>
+                    <div class="module-stat">📚 Imports: <span class="value">utils</span></div>
+                    <div class="module-stat">🔗 Used by: <span class="value">main</span></div>
+                </div>
+                
+                <div class="module-card">
+                    <h4>navigator.py</h4>
+                    <div class="module-stat">📝 Lines: <span class="value">168</span></div>
+                    <div class="module-stat">⚙️ Functions: <span class="value">3</span></div>
+                    <div class="module-stat">📚 Imports: <span class="value">utils</span></div>
+                    <div class="module-stat">🔗 Used by: <span class="value">main, batch_creator</span></div>
+                </div>
+                
+                <div class="module-card">
+                    <h4>batch_creator.py</h4>
+                    <div class="module-stat">📝 Lines: <span class="value">468</span></div>
+                    <div class="module-stat">⚙️ Functions: <span class="value">9</span></div>
+                    <div class="module-stat">📚 Imports: <span class="value">navigator, utils</span></div>
+                    <div class="module-stat">🔗 Used by: <span class="value">main</span></div>
+                </div>
+                
+                <div class="module-card">
+                    <h4>coordinator.py</h4>
+                    <div class="module-stat">📝 Lines: <span class="value">639</span></div>
+                    <div class="module-stat">⚙️ Functions: <span class="value">1</span></div>
+                    <div class="module-stat">📚 Imports: <span class="value">utils</span></div>
+                    <div class="module-stat">🔗 Used by: <span class="value">main, dataset_mover</span></div>
+                </div>
+                
+                <div class="module-card">
+                    <h4>coordination_server.py</h4>
+                    <div class="module-stat">📝 Lines: <span class="value">812</span></div>
+                    <div class="module-stat">⚙️ Functions: <span class="value">23</span></div>
+                    <div class="module-stat">📚 Imports: <span class="value">—</span></div>
+                    <div class="module-stat">🔗 Role: <span class="value">HTTP Server</span></div>
+                </div>
+                
+                <div class="module-card">
+                    <h4>dataset_mover.py</h4>
+                    <div class="module-stat">📝 Lines: <span class="value">2,898 ⭐</span></div>
+                    <div class="module-stat">⚙️ Functions: <span class="value">22</span></div>
+                    <div class="module-stat">📚 Imports: <span class="value">utils</span></div>
+                    <div class="module-stat">🔗 Used by: <span class="value">main, batch_creator</span></div>
+                </div>
+                
+                <div class="module-card">
+                    <h4>utils.py</h4>
+                    <div class="module-stat">📝 Lines: <span class="value">416</span></div>
+                    <div class="module-stat">⚙️ Functions: <span class="value">9</span></div>
+                    <div class="module-stat">📚 Imports: <span class="value">—</span></div>
+                    <div class="module-stat">🔗 Hub: <span class="value">6 modules</span></div>
+                </div>
+                
+                <div class="module-card">
+                    <h4>main.py</h4>
+                    <div class="module-stat">📝 Lines: <span class="value">384</span></div>
+                    <div class="module-stat">⚙️ Functions: <span class="value">1</span></div>
+                    <div class="module-stat">📚 Imports: <span class="value">all core</span></div>
+                    <div class="module-stat">🔗 Role: <span class="value">Entry Point</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dependency Matrix -->
+        <div class="section">
+            <h2>🔗 Dependency Matrix</h2>
+            <table class="matrix-table">
+                <thead>
+                    <tr>
+                        <th>Module</th>
+                        <th>Imports From</th>
+                        <th>Imported By</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="module-name">auth</td>
+                        <td class="imports-list">utils</td>
+                        <td><span class="count-badge">1</span> main</td>
+                    </tr>
+                    <tr>
+                        <td class="module-name">navigator</td>
+                        <td class="imports-list">utils</td>
+                        <td><span class="count-badge">2</span> main, batch_creator</td>
+                    </tr>
+                    <tr>
+                        <td class="module-name">batch_creator</td>
+                        <td class="imports-list">navigator, utils</td>
+                        <td><span class="count-badge">1</span> main</td>
+                    </tr>
+                    <tr>
+                        <td class="module-name">coordinator</td>
+                        <td class="imports-list">utils</td>
+                        <td><span class="count-badge">1</span> main</td>
+                    </tr>
+                    <tr>
+                        <td class="module-name">coordination_server</td>
+                        <td class="imports-list">—</td>
+                        <td><span class="count-badge">0</span> (standalone)</td>
+                    </tr>
+                    <tr>
+                        <td class="module-name">dataset_mover</td>
+                        <td class="imports-list">utils</td>
+                        <td><span class="count-badge">1</span> main</td>
+                    </tr>
+                    <tr>
+                        <td class="module-name">utils</td>
+                        <td class="imports-list">—</td>
+                        <td><span class="count-badge">6</span> all except coordination_server</td>
+                    </tr>
+                    <tr style="background: #e3f2fd; font-weight: 600;">
+                        <td colspan="3"><strong>✓ Total Direct Imports: 12</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Data Flow Diagram -->
+        <div class="section">
+            <h2>📈 Data Flow & Execution</h2>
+            <h3>Phase 1: Batch Creation</h3>
+            <div class="flow-diagram">
+                main.py
+                <span class="flow-arrow">→</span> authenticate() [auth.py]
+                <span class="flow-arrow">→</span> navigate_to_annotate() [navigator.py]
+                <span class="flow-arrow">→</span> run_batch_loop() [batch_creator.py]
+                <span class="flow-arrow">→</span> Create batches (API calls)
+            </div>
+            
+            <h3>Phase 2: Dataset Movement</h3>
+            <div class="flow-diagram">
+                run_batch_loop()
+                <span class="flow-arrow">→</span> (each batch)
+                <span class="flow-arrow">→</span> run_dataset_mover() [dataset_mover.py]
+                <span class="flow-arrow">→</span> get_snapshot() [coordinator.py]
+                <span class="flow-arrow">→</span> HTTP GET /snapshot [coordination_server.py]
+                <br/>
+                <span class="flow-arrow">→</span> Tier 0/1/2 URL collection
+                <span class="flow-arrow">→</span> Move to dataset via 10 parallel tabs
+            </div>
+        </div>
+        
+        <!-- Key Insights -->
+        <div class="section">
+            <h2>🔍 Key Insights</h2>
+            
+            <h3>Central Hub: utils.py</h3>
+            <p>Imported by 6 out of 7 modules (85%), making it the central utility hub. Contains:</p>
+            <ul style="margin-left: 2rem; margin-top: 1rem;">
+                <li>Configuration loading (load_config)</li>
+                <li>Session management (get_session_path)</li>
+                <li>Logging setup (setup_logging, RemoteLogHandler)</li>
+                <li>Diagnostics capturing (capture_diagnostics)</li>
+                <li>Browser optimization (optimize_context_for_headless)</li>
+            </ul>
+            
+            <h3>Most Complex Module: dataset_mover.py</h3>
+            <p>Contains 2,898 lines (45% of total codebase) with sophisticated logic:</p>
+            <ul style="margin-left: 2rem; margin-top: 1rem;">
+                <li>Tier 0: Firestore subscription capture</li>
+                <li>Tier 1: React Fiber DOM scanning (bulk processing)</li>
+                <li>Tier 2: Click-per-card fallback (resilient retry logic)</li>
+                <li>Coordination integration (holds, releases, snapshots)</li>
+                <li>Parallel tab pipeline (round-robin state machine)</li>
+            </ul>
+            
+            <h3>Separation of Concerns</h3>
+            <ul style="margin-left: 2rem; margin-top: 1rem;">
+                <li><strong>Authentication layer</strong>: auth.py (isolated)</li>
+                <li><strong>Navigation layer</strong>: navigator.py (used by batch_creator)</li>
+                <li><strong>Batch orchestration</strong>: batch_creator.py (coordinates Phase 1)</li>
+                <li><strong>Worker coordination</strong>: coordinator.py + coordination_server.py (HTTP bridge)</li>
+                <li><strong>Core movement logic</strong>: dataset_mover.py (Phase 2 implementation)</li>
+            </ul>
+        </div>
+        
+        <!-- Visual Architecture -->
+        <div class="section">
+            <h2>📸 Generated Visual Diagram</h2>
+            <p style="margin-bottom: 1rem; color: #666;">High-resolution dependency graph generated via Graphviz:</p>
+            <div style="text-align: center; background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                <img src="images/module_architecture.png" alt="Module Architecture Diagram" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);">
+            </div>
+        </div>
+        
+    </div>
+    
+    <footer>
+        <div style="margin-bottom: 1rem;">
+            <strong>Roboflow Annotation Batch Automation</strong>
+        </div>
+        <div style="font-size: 0.9rem;">
+            <span class="info-badge">📊 8 Modules</span>
+            <span class="info-badge">🔗 12 Connections</span>
+            <span class="info-badge">📝 6,253 Lines</span>
+            <span class="info-badge">⚙️ 74 Functions</span>
+            <span class="info-badge">🔤 4 Classes</span>
+        </div>
+        <div style="margin-top: 1.5rem; font-size: 0.85rem; opacity: 0.8; color: rgba(255,255,255,0.9);">
+            Made with ❤️ by Ahmed ElBamby for Graduation Project
+        </div>
+    </footer>
+    
+    <script>
+        // Initialize Mermaid diagrams
+        mermaid.initialize({ startOnLoad: true, theme: 'default' });
+        mermaid.contentLoaded();
+    </script>
+</body>
+</html>

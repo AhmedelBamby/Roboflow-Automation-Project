@@ -1,0 +1,221 @@
+================================================================================
+ ROBOFLOW ANNOTATION BATCH AUTOMATION — MODULE ARCHITECTURE
+================================================================================
+
+Project: Automation system for moving images through Roboflow annotation workflow
+Entry: main.py (384 lines)
+Modules: 7 core Python files + Flask server + HTML dashboard
+
+================================================================================
+ HIGH-LEVEL ARCHITECTURE
+================================================================================
+
+                            ┌─────────────────┐
+                            │   main.py       │
+                            │  Entry Point    │
+                            └────────┬────────┘
+                                     │
+        ┌────────────────────────────┼─────────────────────────────┐
+        │                            │                             │
+        ▼                            ▼                             ▼
+    ┌─────────┐              ┌──────────────────┐         ┌────────────────┐
+    │ auth.py │              │  navigator.py    │         │batch_creator.py│
+    │         │              │                  │         │                │
+    │ ┌─────┐ │              │ ┌──────────┐     │         │ ┌────────────┐ │
+    │ │Auth │ │              │ │Navigate  │     │    ┌────┼─┤Run Batch  │ │
+    │ └─────┘ │              │ │Elements  │     │    │    │ │Loop P1    │ │
+    └────┬────┘              │ └──────────┘     │    │    │ └────────────┘ │
+         │                   └────┬─────────────┘    │    └────────────────┘
+         │                        │                 │            │
+         │                   UTILS.PY (Central Hub)◄┼────────────┤
+         │                   ┌──────────────────┐    │            │
+         └───────────────────┤- load_config     │◄──┴────────────┘
+                             │- setup_logging   │┐
+                             │- get_session_path││
+                             │- capture_diag    ││
+                             └──────────────────┘│
+                                                 │
+                    ┌────────────────────────────┴─────────────┐
+                    │                                          │
+                    ▼                                          ▼
+            ┌─────────────────┐                      ┌──────────────────┐
+            │ coordinator.py  │                      │dataset_mover.py  │
+            │                 │                      │                  │
+            │┌───────────────┐ │  HTTP REST API      │┌────────────────┐│
+            ││NullCoordinator│◄──────────────────┐   ││ Tier 0: FS RPC ││
+            │└───────────────┘ │                 │   │├────────────────┤│
+            │┌───────────────┐ │                 │   ││ Tier 1: Fiber  ││
+            ││HTTPCoordinator│◄─────────┐        │   │├────────────────┤│
+            │└───────────────┘ │        │        │   ││ Tier 2: Click  ││
+            │                 │        │        │   │├────────────────┤│
+            └─────────────────┘        │        │   ││Move to Dataset ││
+                                       │        │   │└────────────────┘│
+                                       │        │   │                  │
+         ┌─────────────────────────────┘        │   └──────────────────┘
+         │                                      │            △
+         ▼                                      │            │
+    ┌────────────────────────┐                  │ ┌──────────┴──────────┐
+    │coordination_server.py  │                  │ │ batch_creator.py    │
+    │(Flask Process)         │                  │ │ calls dataset_mover │
+    │                        │                  │ │ for each batch      │
+    │ ┌──────────────────┐   │                  │ └─────────────────────┘
+    │ │State Management  │   │          ────────┘
+    │ │/reset            │   │         │
+    │ │/reset_blacklist  │   │         │
+    │ │/snapshot         │   │         │
+    │ │/summary          │   │         │
+    │ │/workers          │   │         │
+    │ └──────────────────┘   │         │
+    │                        │         │
+    │ ┌──────────────────┐   │         │
+    │ │Metrics & Logging │   │         │
+    │ │/logs/stream      │   │         │
+    │ │/logs/history     │   │         │
+    │ └──────────────────┘   │         │
+    │                        │         │
+    │ ┌──────────────────┐   │         │
+    │ │Code Management   │   │         │
+    │ │/code/manifest    │   │         │
+    │ │/code/push        │   │         │
+    │ └──────────────────┘   │         │
+    └────────────────────────┘         │
+             │                         │
+             └─────────────────────────┘
+                    Renders
+                      │
+                      ▼
+            ┌──────────────────────┐
+            │templates/            │
+            │dashboard.html        │
+            │ (Live Dashboard)     │
+            │ - Stats Cards        │
+            │ - Progress Bars      │
+            │ - Worker Grid        │
+            │ - Tab Tracker        │
+            │ - Log Stream         │
+            │ - Coordination Panel │
+            │ - Code Manifest      │
+            └──────────────────────┘
+
+================================================================================
+ DATA FLOW — PHASE 1: BATCH CREATION
+================================================================================
+
+main.py startup
+    │
+    ├─→ Load config.yaml
+    ├─→ Call authenticate() [auth.py]
+    │       └─→ utils.get_session_path()
+    │
+    ├─→ Call navigate_to_annotate() [navigator.py]
+    │       └─→ utils.load_config()
+    │
+    └─→ Call run_batch_loop() [batch_creator.py]
+            └─→ Click annotate button [navigator.py]
+            └─→ Click "View Unassigned" [navigator.py]
+            └─→ For each batch:
+                ├─→ Collect image data
+                └─→ Create batch (HTTP POST)
+
+================================================================================
+ DATA FLOW — PHASE 2: DATASET MOVEMENT
+================================================================================
+
+run_batch_loop() loops until complete
+    │
+    └─→ Call run_dataset_mover() [dataset_mover.py]
+            │
+            ├─→ Get coordination snapshot [coordinator.py]
+            │   └─→ HTTP GET /snapshot [coordination_server.py]
+            │
+            ├─→ For each board URL:
+            │   │
+            │   ├─→ Tier 0: Try capture from Firestore subscription
+            │   │
+            │   ├─→ Tier 1: Scan React Fiber tree (bulk)
+            │   │   └─→ Filter: already-done, held-by-other, blacklisted
+            │   │
+            │   ├─→ Tier 2: Click-per-card fallback
+            │   │   └─→ Same three-way filter + retry loops
+            │   │
+            │   └─→ For each URL collected:
+            │       ├─→ Try to claim via coordinator
+            │       │   └─→ HTTP POST /hold [coordination_server.py]
+            │       │
+            │       └─→ If claimed: move to dataset
+            │           └─→ Pipeline: 10 parallel tabs
+            │
+            ├─→ Every 60s: refresh snapshot
+            │   └─→ Update local coord_held, coord_done
+            │
+            └─→ On batch complete:
+                ├─→ Release URL via coordinator
+                │   └─→ HTTP POST /release [coordination_server.py]
+                │
+                └─→ Log summary: moved, failed, denied
+
+================================================================================
+ MODULE DEPENDENCY MATRIX
+================================================================================
+
+Module              │ Imports From         │ Imported By      │ Type
+────────────────────┼──────────────────────┼──────────────────┼─────────────────
+auth.py             │ utils                │ main             │ Core Auth
+navigator.py        │ utils                │ main, batch_c    │ Browser Nav
+batch_creator.py    │ navigator, utils     │ main             │ Batch Loop
+coordinator.py      │ utils                │ main, dataset_m  │ Coordination
+coordination_server │ (Flask stdlib)       │ (HTTP client)    │ Server (sep proc)
+dataset_mover.py    │ utils                │ main, batch_c    │ Core Logic
+utils.py            │ (no src imports)     │ all others       │ Utilities
+templates/          │ (HTML/JS/CSS)        │ coordinator_srv  │ Web UI
+
+Key Observations:
+- utils.py is the HUB: imported by 6/7 modules (except coordination_server)
+- coordinator.py bridges workers and central server via HTTP
+- dataset_mover.py is the MOST COMPLEX: 2877 lines, Tier0-2 logic
+- batch_creator.py calls dataset_mover.py sequentially
+- coordination_server.py is STANDALONE process with separate lifecycle
+
+================================================================================
+ TOTAL CONNECTIONS
+================================================================================
+
+Import Connections (Python):
+  - auth → utils
+  - navigator → utils
+  - batch_creator → navigator
+  - batch_creator → utils
+  - dataset_mover → utils
+  - coordinator → utils
+  ──────────────────────────────────
+  Total: 6 direct import connections
+
+Runtime Flow Connections:
+  - main → auth → navigate_to_annotate()
+  - main → batch_creator → run_batch_loop()
+  - batch_creator → dataset_mover → run_dataset_mover()
+  - main → coordinator → HTTPCoordinator
+  ──────────────────────────────────
+  Total: 4 direct call connections
+
+HTTP/IPC Connections:
+  - HTTPCoordinator ↔ coordination_server (REST API, bidirectional)
+  - coordination_server → templates/dashboard.html (render)
+  - dashboard.html → coordination_server (XHR/SSE callbacks)
+  ──────────────────────────────────
+  Total: 3 network connections (2 unique endpoints)
+
+────────────────────────────────────────────────────────────────────────────
+TOTAL UNIQUE CONNECTIONS: 6 imports + 4 runtime calls + 3 network = 13
+
+Dependency Degree:
+  utils.py               : 6 (imported by most modules)
+  coordinator.py         : 2 (used by main, dataset_mover)
+  navigator.py           : 2 (used by main, batch_creator)
+  dataset_mover.py       : 2 (used by main, batch_creator)
+  auth.py                : 1 (used by main only)
+  batch_creator.py       : 1 (used by main only)
+  coordination_server.py : 0 (standalone HTTP server)
+  templates/             : 1 (served by coordination_server)
+
+================================================================================

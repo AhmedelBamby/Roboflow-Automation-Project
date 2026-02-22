@@ -1,0 +1,151 @@
+============================================================
+MERMAID DIAGRAM — USAGE GUIDE
+============================================================
+
+File: module_architecture.mmd
+Location: d:\automation-project\module_architecture.mmd
+
+The Mermaid diagram source code is saved and ready to use!
+
+============================================================
+HOW TO USE THIS DIAGRAM
+============================================================
+
+1. RENDER IN GITHUB
+   ─────────────────
+   • Upload this file to GitHub or paste content in a markdown file
+   • GitHub automatically renders .mmd files
+   • Visit: https://github.com/your-repo/module_architecture.mmd
+
+2. RENDER IN DOCUMENTATION / MARKDOWN
+   ──────────────────────────────────
+   Add to any .md file as a fenced code block:
+   
+   ```mermaid
+   [paste contents of module_architecture.mmd here]
+   ```
+
+3. RENDER ONLINE
+   ──────────────
+   • Mermaid Live Editor: https://mermaid.live
+   • Paste the diagram code and see instant preview
+   • Export as PNG, SVG, or PDF
+
+4. INCLUDE IN HTML
+   ────────────────
+   The module_architecture.html file already includes an embedded 
+   version of this diagram. Open in browser to view interactive version.
+
+5. CONVERT TO IMAGE
+   ────────────────
+   Using Mermaid CLI:
+   
+   npm install -g @mermaid-js/mermaid-cli
+   mmdc -i module_architecture.mmd -o module_architecture_generated.png
+   
+   Or use an online converter.
+
+============================================================
+DIAGRAM STRUCTURE
+============================================================
+
+The diagram shows:
+
+Entry Point:
+  └─ main.py (orchestrator)
+
+Modules Organized by Function:
+  ├─ Core Authentication (auth.py)
+  ├─ Browser Navigation (navigator.py)
+  ├─ Batch Operations (batch_creator.py)
+  ├─ Coordination Layer (coordinator.py + coordination_server.py)
+  ├─ Dataset Management (dataset_mover.py)
+  └─ Utilities & UI (utils.py + dashboard.html)
+
+Connection Types:
+  ➜ imports   — Python module imports
+  ➜ uses      — Runtime usage/dependency
+  ➜ calls     — Direct function calls
+  ↔ HTTP REST — Network communication
+
+Color Coding:
+  🔵 Blue     — Entry point (main.py)
+  🟢 Green    — Utilities & utilities (utils.py)
+  🟠 Orange   — Coordination (coordinator + server)
+  🟣 Purple   — Batch & Dataset operations
+  🔵 Light    — Authentication & Navigation
+  🔵 Cyan     — Dashboard/UI
+
+============================================================
+VERSIONS AVAILABLE
+============================================================
+
+1. module_architecture.mmd (this file)
+   - Pure Mermaid source code
+   - Editable, portable, version-control friendly
+
+2. module_architecture.html
+   - Interactive HTML with embedded Mermaid
+   - Multiple diagram formats
+   - Module details and statistics
+
+3. images/module_architecture.png
+   - Graphviz-generated high-resolution PNG
+   - Professional visualization
+   - Suitable for presentations
+
+4. ARCHITECTURE.txt
+   - ASCII art version
+   - Plain text, no dependencies required
+
+5. MODULE_BREAKDOWN.txt
+   - Detailed module inventory
+   - Dependency matrix
+   - Function/class listings
+
+============================================================
+EDITING THE DIAGRAM
+============================================================
+
+To modify:
+
+1. Edit module_architecture.mmd in any text editor
+2. Update node names, descriptions, or connections
+3. Render to preview changes using Mermaid Live Editor
+4. Or save and open in GitHub/documentation
+
+Key elements to modify:
+  - Node names: MAIN, AUTH, NAV, etc.
+  - Node labels: "main.py<br/>Entry Point"
+  - Connections: MAIN -->|imports| AUTH
+  - Styles: style MAIN fill:#4a90e2,...
+
+============================================================
+QUICK REFERENCE
+============================================================
+
+Common Mermaid Syntax:
+
+Node Definition:
+  NODEID["Label Text<br/>With Line Break"]
+
+Connection:
+  NODEID1 -->|label| NODEID2
+
+Subgraph (Group):
+  subgraph "Group Name"
+      NODE1
+      NODE2
+  end
+
+Styling:
+  style NODEID fill:#color,stroke:#color,stroke-width:2px,color:#fff
+
+Bidirectional Arrow:
+  NODE1 <-->|label| NODE2
+
+============================================================
+For questions or updates, refer to:
+  - docs/ folder
+  - README.md
+  - ARCHITECTURE.txt

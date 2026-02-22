@@ -1,0 +1,62 @@
+graph TB
+    subgraph "Entry Point"
+        MAIN["main.py<br/>Entry Point"]
+    end
+    
+    subgraph "Core Authentication"
+        AUTH["auth.py<br/>Authenticate<br/>Session Mgmt"]
+    end
+    
+    subgraph "Browser Navigation"
+        NAV["navigator.py<br/>Page Navigation<br/>Element Clicking"]
+    end
+    
+    subgraph "Batch Operations"
+        BC["batch_creator.py<br/>Batch Creation<br/>Loop Control"]
+    end
+    
+    subgraph "Coordination Layer"
+        COORD["coordinator.py<br/>Coordinator Interface<br/>NullCoordinator<br/>HTTPCoordinator"]
+        COORDSRV["coordination_server.py<br/>Flask Server<br/>State Mgmt<br/>Snapshot API"]
+    end
+    
+    subgraph "Dataset Management"
+        DM["dataset_mover.py<br/>URL Collection<br/>Tier 0-2 Strategy<br/>Move to Dataset"]
+    end
+    
+    subgraph "Utilities & UI"
+        UTILS["utils.py<br/>Config, Logging<br/>Diagnostics<br/>Session Helpers"]
+        TMPL["templates/<br/>dashboard.html<br/>Live Dashboard"]
+    end
+    
+    MAIN -->|imports| AUTH
+    MAIN -->|imports| NAV
+    MAIN -->|imports| BC
+    MAIN -->|imports| COORD
+    MAIN -->|imports| DM
+    MAIN -->|imports| UTILS
+    
+    AUTH -->|imports| UTILS
+    NAV -->|imports| UTILS
+    BC -->|imports| NAV
+    BC -->|imports| UTILS
+    DM -->|imports| UTILS
+    COORD -->|imports| UTILS
+    
+    MAIN -->|uses| COORD
+    MAIN -->|uses| COORDSRV
+    
+    COORD <-->|HTTP REST| COORDSRV
+    COORDSRV -->|renders| TMPL
+    
+    BC -->|calls| DM
+    
+    style MAIN fill:#4a90e2,stroke:#333,stroke-width:2px,color:#fff
+    style UTILS fill:#50c878,stroke:#333,stroke-width:2px,color:#fff
+    style COORD fill:#f5a623,stroke:#333,stroke-width:2px,color:#fff
+    style COORDSRV fill:#f5a623,stroke:#333,stroke-width:2px,color:#fff
+    style AUTH fill:#7ed321,stroke:#333,stroke-width:2px,color:#fff
+    style NAV fill:#7ed321,stroke:#333,stroke-width:2px,color:#fff
+    style BC fill:#bd10e0,stroke:#333,stroke-width:2px,color:#fff
+    style DM fill:#bd10e0,stroke:#333,stroke-width:2px,color:#fff
+    style TMPL fill:#50e3c2,stroke:#333,stroke-width:2px,color:#fff

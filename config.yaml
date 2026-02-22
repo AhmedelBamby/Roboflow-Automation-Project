@@ -3,11 +3,11 @@
 # ============================================================
 
 # --- Authentication ---
-email: "A.Elbamby61869@student.aast.edu"
+email: "UR EMAIL HERE"
 
 # --- Project ---
-workspace_url: "https://app.roboflow.com/graduation-project-computer-vision-aastmt"
-project_name: "major-aast-dataset"
+workspace_url: ""
+project_name: ""
 
 # --- Phase ---
 # Which phase to run: 1 (assign batches), 2 (move to dataset), or "both"

@@ -1,0 +1,210 @@
+{
+  "modules": {
+    "auth": {
+      "path": "d:\\automation-project\\src\\auth.py",
+      "lines": 182,
+      "code_lines": 133,
+      "imports": [
+        "utils"
+      ],
+      "functions": [
+        "save_session",
+        "login",
+        "authenticate",
+        "is_session_valid"
+      ],
+      "classes": []
+    },
+    "batch_creator": {
+      "path": "d:\\automation-project\\src\\batch_creator.py",
+      "lines": 468,
+      "code_lines": 339,
+      "imports": [
+        "navigator",
+        "utils"
+      ],
+      "functions": [
+        "confirm_assignment",
+        "select_labellers",
+        "select_images_until_threshold",
+        "run_batch_loop",
+        "open_assign_dialog",
+        "get_assign_button_count",
+        "click_next_page",
+        "click_select_all",
+        "set_images_per_page"
+      ],
+      "classes": []
+    },
+    "coordination_server": {
+      "path": "d:\\automation-project\\src\\coordination_server.py",
+      "lines": 812,
+      "code_lines": 608,
+      "imports": [],
+      "functions": [
+        "heartbeat",
+        "log_stream",
+        "reset_blacklist",
+        "code_file",
+        "main",
+        "done",
+        "snapshot",
+        "log_history",
+        "health",
+        "status",
+        "available",
+        "serve_diagnostic",
+        "reset",
+        "code_manifest",
+        "failed",
+        "summary",
+        "workers_list",
+        "diagnostics",
+        "dashboard",
+        "count",
+        "receive_logs",
+        "batch_claim",
+        "claim"
+      ],
+      "classes": []
+    },
+    "coordinator": {
+      "path": "d:\\automation-project\\src\\coordinator.py",
+      "lines": 639,
+      "code_lines": 516,
+      "imports": [
+        "utils"
+      ],
+      "functions": [
+        "build_coordinator"
+      ],
+      "classes": [
+        "NullCoordinator",
+        "HTTPCoordinator",
+        "URLCoordinator"
+      ]
+    },
+    "dataset_mover": {
+      "path": "d:\\automation-project\\src\\dataset_mover.py",
+      "lines": 2898,
+      "code_lines": 2265,
+      "imports": [
+        "utils"
+      ],
+      "functions": [
+        "collect_job_urls",
+        "dismiss_swal_if_present",
+        "tick_verifying",
+        "tick_converting",
+        "start_null_conversion",
+        "collect_job_urls_bottom_up",
+        "get_job_count",
+        "tick_confirming",
+        "tick_ready",
+        "get_unannotated_count",
+        "tick_scanning",
+        "tick_pending",
+        "add_to_dataset",
+        "tick_null_clicked",
+        "wait_for_tab_content",
+        "tick_navigating",
+        "wait_for_card_detail",
+        "scan_unannotated_robustly",
+        "is_processing_complete",
+        "run_dataset_mover",
+        "tick_add_clicked",
+        "tick_detail_wait"
+      ],
+      "classes": [
+        "TabState"
+      ]
+    },
+    "navigator": {
+      "path": "d:\\automation-project\\src\\navigator.py",
+      "lines": 168,
+      "code_lines": 120,
+      "imports": [
+        "utils"
+      ],
+      "functions": [
+        "click_annotate_button",
+        "navigate_to_annotate",
+        "click_view_unassigned"
+      ],
+      "classes": []
+    },
+    "utils": {
+      "path": "d:\\automation-project\\src\\utils.py",
+      "lines": 416,
+      "code_lines": 302,
+      "imports": [],
+      "functions": [
+        "take_screenshot",
+        "adaptive_timeout",
+        "setup_logging",
+        "capture_diagnostics",
+        "get_session_path",
+        "optimize_context_for_headless",
+        "get_worker_id",
+        "load_config",
+        "parse_image_count"
+      ],
+      "classes": [
+        "RemoteLogHandler"
+      ]
+    },
+    "main": {
+      "path": "d:\\automation-project\\main.py",
+      "lines": 384,
+      "code_lines": 294,
+      "imports": [
+        "batch_creator",
+        "coordinator",
+        "auth",
+        "navigator",
+        "dataset_mover",
+        "utils"
+      ],
+      "functions": [
+        "main"
+      ],
+      "classes": []
+    }
+  },
+  "import_graph": {
+    "auth": [
+      "utils"
+    ],
+    "batch_creator": [
+      "navigator",
+      "utils"
+    ],
+    "coordinator": [
+      "utils"
+    ],
+    "dataset_mover": [
+      "utils"
+    ],
+    "navigator": [
+      "utils"
+    ],
+    "main": [
+      "batch_creator",
+      "coordinator",
+      "auth",
+      "navigator",
+      "dataset_mover",
+      "utils"
+    ]
+  },
+  "dependency_degree": {
+    "utils": 6,
+    "navigator": 2,
+    "batch_creator": 1,
+    "coordinator": 1,
+    "auth": 1,
+    "dataset_mover": 1
+  },
+  "total_modules": 8,
+  "total_imports": 12
+}

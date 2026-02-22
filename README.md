@@ -46,6 +46,24 @@ The system supports **multi-machine deployment** — run two laptops simultaneou
 
 ## Architecture
 
+### High-Level Module Diagram
+
+![Module Architecture](images/module_architecture.png)
+
+For an **interactive version**, open [module_architecture.html](module_architecture.html) in your browser. It includes:
+- 📊 Detailed module inventory
+- 🔗 Dependency matrix
+- 📈 Data flow diagrams
+- 🔍 Key insights and statistics
+
+For detailed module documentation, see:
+- [ARCHITECTURE.txt](ARCHITECTURE.txt) — ASCII art diagram with full connection breakdown
+- [MODULE_BREAKDOWN.txt](MODULE_BREAKDOWN.txt) — Detailed module inventory
+- [module_architecture.mmd](module_architecture.mmd) — Mermaid source (editable)
+- [module_architecture.json](module_architecture.json) — Structured data export
+
+### Execution Flow
+
 ```
 ┌──────────────────────────────────────────────────────────────────┐
 │                        main.py (Entry Point)                     │
@@ -344,29 +362,40 @@ Access at `http://localhost:8099/dashboard` when running the coordination server
 
 ```
 automation-project/
-├── main.py                    # Entry point — CLI, auth, phase orchestration
-├── config.yaml                # All runtime configuration
-├── requirements.txt           # Python dependencies
-├── session.json               # Saved browser session (auto-generated)
-├── coordination.json          # Coordination state (auto-generated)
+├── main.py                           # Entry point — CLI, auth, phase orchestration
+├── config.yaml                       # All runtime configuration
+├── requirements.txt                  # Python dependencies
+├── session.json                      # Saved browser session (auto-generated)
+├── coordination.json                 # Coordination state (auto-generated)
+├── generate_diagrams.py              # Architecture analyzer & diagram generator
 │
 ├── src/
-│   ├── auth.py                # Magic-link login + session persistence
-│   ├── navigator.py           # Page navigation + board readiness checks
-│   ├── batch_creator.py       # Phase 1 — image selection + batch assignment
-│   ├── dataset_mover.py       # Phase 2 — parallel tab pipeline + collection tiers
-│   ├── coordinator.py         # URL coordination (file-based + HTTP client)
-│   ├── coordination_server.py # HTTP server (Flask) + dashboard + code push
-│   ├── utils.py               # Config loading, logging, diagnostics, timeouts
+│   ├── auth.py                       # Magic-link login + session persistence
+│   ├── navigator.py                  # Page navigation + board readiness checks
+│   ├── batch_creator.py              # Phase 1 — image selection + batch assignment
+│   ├── dataset_mover.py              # Phase 2 — parallel tab pipeline + collection tiers
+│   ├── coordinator.py                # URL coordination (file-based + HTTP client)
+│   ├── coordination_server.py        # HTTP server (Flask) + dashboard + code push
+│   ├── utils.py                      # Config loading, logging, diagnostics, timeouts
 │   └── templates/
-│       └── dashboard.html     # Jinja2 dashboard template
+│       └── dashboard.html            # Jinja2 dashboard template
 │
 ├── docs/
 │   └── two-laptop-setup-guide.md
 │
+├── images/
+│   └── module_architecture.png       # High-resolution module diagram (Graphviz)
+│
+├── Architecture Documentation/
+│   ├── module_architecture.html      # ✨ Interactive module explorer (start here!)
+│   ├── module_architecture.mmd       # Mermaid source code (editable)
+│   ├── module_architecture.json      # Structured data (for tools/scripts)
+│   ├── ARCHITECTURE.txt              # ASCII art with full connection breakdown
+│   └── MODULE_BREAKDOWN.txt          # Detailed module inventory & matrix
+│
 └── logs/
-    ├── screenshots/           # Failure screenshots
-    └── htmldumps/             # Full HTML page dumps on errors
+    ├── screenshots/                  # Failure screenshots
+    └── htmldumps/                    # Full HTML page dumps on errors
 ```
 
 ---
@@ -383,8 +412,46 @@ automation-project/
 | **Slow execution** | Set `headless: true` and reduce `timeout_multiplier`. Ensure stable network connection |
 | **Board shows 0 jobs but automation continues** | The 7-signal exit system will detect this within 1-2 batches and stop automatically |
 
+### Understanding Module Dependencies
+
+For a detailed breakdown of how modules interact, see the [Architecture Documentation](#architecture-documentation) section above. The interactive HTML explorer ([module_architecture.html](module_architecture.html)) provides:
+- Visual dependency graph
+- Per-module function and class inventories
+- Connection metrics and coupling analysis
+- Data flow diagrams for Phase 1 and Phase 2
+
+---
+
+---
+
+## Architecture Documentation
+
+Comprehensive module diagrams and dependency analysis are generated automatically:
+
+| Format | File | Purpose |
+|--------|------|----------|
+| **Interactive HTML** | [module_architecture.html](module_architecture.html) | Browse module details, stats, and embedded Mermaid diagram |
+| **High-Resolution PNG** | [images/module_architecture.png](images/module_architecture.png) | Graphviz-generated diagram for presentations/docs |
+| **Mermaid Source** | [module_architecture.mmd](module_architecture.mmd) | Editable graph definition (render on GitHub/Mermaid Live) |
+| **ASCII Art** | [ARCHITECTURE.txt](ARCHITECTURE.txt) | Plain-text flowchart showing all modules and connections |
+| **Detailed Breakdown** | [MODULE_BREAKDOWN.txt](MODULE_BREAKDOWN.txt) | Line counts, functions, classes, dependency matrix |
+| **JSON Data** | [module_architecture.json](module_architecture.json) | Structured data export for tools/scripts |
+
+Generate or update these files anytime with:
+```bash
+python generate_diagrams.py
+```
+
+**8 Modules • 12 Direct Imports • 6,253 Lines • 74 Functions • 4 Classes**
+
 ---
 
 ## License
 
 MIT
+
+---
+
+<p align="center" style="color: #888; font-size: 0.95em;">
+  Made with ❤️ by Ahmed ElBamby for Graduation Project
+</p>

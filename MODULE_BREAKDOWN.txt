@@ -1,0 +1,100 @@
+================================================================================
+MODULE ARCHITECTURE — DETAILED BREAKDOWN
+================================================================================
+
+MODULE INVENTORY
+--------------------------------------------------------------------------------
+
+AUTH
+  File: d:\automation-project\src\auth.py
+  Lines: 182 total (133 code)
+  Classes: 0
+  Functions: 4
+  Imports: utils
+    Functions: authenticate, login, save_session
+      ... and 1 more
+
+BATCH_CREATOR
+  File: d:\automation-project\src\batch_creator.py
+  Lines: 468 total (339 code)
+  Classes: 0
+  Functions: 9
+  Imports: navigator, utils
+    Functions: confirm_assignment, select_images_until_threshold, select_labellers
+      ... and 6 more
+
+COORDINATION_SERVER
+  File: d:\automation-project\src\coordination_server.py
+  Lines: 812 total (608 code)
+  Classes: 0
+  Functions: 23
+    Functions: heartbeat, log_stream, reset_blacklist
+      ... and 20 more
+
+COORDINATOR
+  File: d:\automation-project\src\coordinator.py
+  Lines: 639 total (516 code)
+  Classes: 3
+  Functions: 1
+  Imports: utils
+    Classes: HTTPCoordinator, NullCoordinator, URLCoordinator
+    Functions: build_coordinator
+
+DATASET_MOVER
+  File: d:\automation-project\src\dataset_mover.py
+  Lines: 2898 total (2265 code)
+  Classes: 1
+  Functions: 22
+  Imports: utils
+    Classes: TabState
+    Functions: collect_job_urls, dismiss_swal_if_present, tick_verifying
+      ... and 19 more
+
+MAIN
+  File: d:\automation-project\main.py
+  Lines: 384 total (294 code)
+  Classes: 0
+  Functions: 1
+  Imports: auth, batch_creator, coordinator, dataset_mover, navigator, utils
+    Functions: main
+
+NAVIGATOR
+  File: d:\automation-project\src\navigator.py
+  Lines: 168 total (120 code)
+  Classes: 0
+  Functions: 3
+  Imports: utils
+    Functions: click_annotate_button, click_view_unassigned, navigate_to_annotate
+
+UTILS
+  File: d:\automation-project\src\utils.py
+  Lines: 416 total (302 code)
+  Classes: 1
+  Functions: 9
+    Classes: RemoteLogHandler
+    Functions: adaptive_timeout, setup_logging, take_screenshot
+      ... and 6 more
+
+
+================================================================================
+DEPENDENCY MATRIX
+================================================================================
+
+Module               | Imports              | Imported By    
+--------------------------------------------------------------------------------
+auth                 | utils                | 1
+batch_creator        | navigator, utils     | 1
+coordination_server  | —                    | 0
+coordinator          | utils                | 1
+dataset_mover        | utils                | 1
+main                 | auth, batch_creator, coordinator, dataset_mover, navigator, utils | 0
+navigator            | utils                | 2
+utils                | —                    | 6
+
+
+================================================================================
+CONNECTION SUMMARY
+================================================================================
+
+Total Direct Imports: 12
+Most Central Module: utils (imported by 6)
