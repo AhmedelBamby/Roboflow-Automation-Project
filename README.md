@@ -294,15 +294,8 @@ Monitor both workers at: `http://localhost:8099/dashboard`
 7. Returns to Unassigned Images and repeats
 
 **📹 Demo:**
-
-*Quick Preview (30s):*
-<img src="https://drive.google.com/uc?id=198_pXi_RXY0jn2FVZs8Yq9qYpAGiykQ-" alt="Phase 1 Demo GIF" width="100%" style="max-width: 600px;" />
-
-*Full Recording:*
-<video width="100%" style="max-width: 600px;" controls>
-  <source src="https://drive.google.com/uc?id=1t5Q-xes5ApGvwhcLTwi8Jn2XPhkw5A3a" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+- [Quick Preview (30s GIF)](https://drive.google.com/file/d/198_pXi_RXY0jn2FVZs8Yq9qYpAGiykQ-/view?usp=sharing)
+- [Full Recording (MP4)](https://drive.google.com/file/d/1t5Q-xes5ApGvwhcLTwi8Jn2XPhkw5A3a/view?usp=sharing)
 
 ### Phase 2 — Move to Dataset
 
@@ -317,15 +310,8 @@ Monitor both workers at: `http://localhost:8099/dashboard`
 5. Repeats until all jobs are processed or the board is empty
 
 **📹 Demo:**
-
-*Quick Preview (30s):*
-<img src="https://drive.google.com/uc?id=1dZJSDUvq-2bPPTYXcnJNKe1FL85Vin27" alt="Phase 2 Demo GIF" width="100%" style="max-width: 600px;" />
-
-*Full Recording:*
-<video width="100%" style="max-width: 600px;" controls>
-  <source src="https://drive.google.com/uc?id=1vGvE2J_lQSgdPPkkJ3CNbOcdWA2BPZZA" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+- [Quick Preview (30s GIF)](https://drive.google.com/file/d/1dZJSDUvq-2bPPTYXcnJNKe1FL85Vin27/view?usp=sharing)
+- [Full Recording (MP4)](https://drive.google.com/file/d/1vGvE2J_lQSgdPPkkJ3CNbOcdWA2BPZZA/view?usp=sharing)
 
 ---
 
