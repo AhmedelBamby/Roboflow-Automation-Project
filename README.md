@@ -12,6 +12,7 @@
 ## Table of Contents
 
 - [Overview](#overview)
+- [Demo](#demo)
 - [Architecture](#architecture)
 - [Features](#features)
 - [Prerequisites](#prerequisites)
@@ -41,6 +42,22 @@ When managing large-scale annotation projects on Roboflow (thousands of jobs, hu
 | **Phase 2** | Processes annotating jobs → converts unannotated images to null → adds to dataset | 10 jobs in parallel |
 
 The system supports **multi-machine deployment** — run two laptops simultaneously with opposite collection strategies (top-down and bottom-up) for maximum throughput, coordinated through a central HTTP server.
+
+---
+
+## Demo
+
+### Phase 1 — Batch Assignment Demo
+
+[![Roboflow Automation Project Phase 1 Demo Video](https://img.youtube.com/vi/v6QeOOFJtqs/maxresdefault.jpg)](https://youtu.be/v6QeOOFJtqs)
+
+> Click the image above to watch the Phase 1 demo on YouTube.
+
+### Phase 2 — Move to Dataset Demo
+
+[![Roboflow Automation Project Phase 2 Demo Video](https://img.youtube.com/vi/X4grrCbCrqk/maxresdefault.jpg)](https://youtu.be/X4grrCbCrqk)
+
+> Click the image above to watch the Phase 2 demo on YouTube.
 
 ---
 
